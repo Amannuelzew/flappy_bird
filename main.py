@@ -15,6 +15,8 @@ ground_scroll = 0
 scroll_speed = 4
 bottom = 768
 pip_gap = 150
+pipe_frequency = 1500
+last_time = pygame.time.get_ticks()-pipe_frequency
 flying = False
 game_over = False
 
@@ -90,10 +92,7 @@ flappy = Bird(100, width//2)
 bird_group.add(flappy)
 
 pipe_group = pygame.sprite.Group()
-bottom_pipe = Pipe(300, width//2, -1)
-top_pipe = Pipe(300, width//2, 1)
-pipe_group.add(bottom_pipe)
-pipe_group.add(top_pipe)
+
 
 # Game loop
 running = True
@@ -113,8 +112,15 @@ while running:
     if flappy.rect.bottom >= bottom:
         game_over = True
         flying = False
-    if not game_over:
-
+    if not game_over and flying:
+        # generate pipes automatically
+        now = pygame.time.get_ticks()
+        if now-last_time > pipe_frequency:
+            bottom_pipe = Pipe(width, width//2, -1)
+            top_pipe = Pipe(width, width//2, 1)
+            pipe_group.add(bottom_pipe)
+            pipe_group.add(top_pipe)
+            last_time = now
         ground_scroll -= scroll_speed
         # Each little bars on the ground image are 35 pixels
         if ground_scroll < -35:
