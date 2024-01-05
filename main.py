@@ -1,4 +1,4 @@
-from typing import Any
+
 import pygame
 import sys
 
@@ -69,9 +69,29 @@ class Bird(pygame.sprite.Sprite):
                 self.images[self.index], self.velocity * -2)
 
 
+class Pipe(pygame.sprite.Sprite):
+    def __init__(self, x, y, position) -> None:
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('img/pipe.png')
+        self.rect = self.image.get_rect()
+        # position -1 for bottom pipe; 1 for top
+        if position == 1:
+            self.image = pygame.transform.flip(self.image, False, True)
+            self.rect.bottomleft = [x, y]
+        else:
+            self.rect.topleft = [x, y]
+
+
 bird_group = pygame.sprite.Group()
 flappy = Bird(100, width//2)
 bird_group.add(flappy)
+
+pipe_group = pygame.sprite.Group()
+bottom_pipe = Pipe(300, width//2, -1)
+top_pipe = Pipe(300, width//2, 1)
+pipe_group.add(bottom_pipe)
+pipe_group.add(top_pipe)
+
 # Game loop
 running = True
 while running:
@@ -81,6 +101,10 @@ while running:
     # draw ground
     bird_group.draw(screen)
     bird_group.update()
+
+    pipe_group.draw(screen)
+    pipe_group.update()
+
     screen.blit(ground, (ground_scroll, bottom))
 
     if flappy.rect.bottom >= bottom:
