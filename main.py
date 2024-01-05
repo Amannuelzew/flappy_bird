@@ -1,4 +1,3 @@
-
 import pygame
 import sys
 
@@ -15,6 +14,7 @@ clock = pygame.time.Clock()
 ground_scroll = 0
 scroll_speed = 4
 bottom = 768
+pip_gap = 150
 flying = False
 game_over = False
 
@@ -77,9 +77,12 @@ class Pipe(pygame.sprite.Sprite):
         # position -1 for bottom pipe; 1 for top
         if position == 1:
             self.image = pygame.transform.flip(self.image, False, True)
-            self.rect.bottomleft = [x, y]
+            self.rect.bottomleft = [x, y-pip_gap]
         else:
-            self.rect.topleft = [x, y]
+            self.rect.topleft = [x, y+pip_gap]
+
+    def update(self) -> None:
+        self.rect.x -= scroll_speed
 
 
 bird_group = pygame.sprite.Group()
