@@ -18,11 +18,21 @@ bottom = 768
 pip_gap = 150
 pipe_frequency = 1500
 last_time = pygame.time.get_ticks()-pipe_frequency
+between_pipe = False
+score = 0
 flying = False
 game_over = False
 
 bg = pygame.image.load('img/bg.png')
 ground = pygame.image.load('img/ground.png')
+
+font = pygame.font.SysFont('arial', 60)
+WHITE = (255, 255, 255)
+
+
+def draw_text(text, font, text_color, x, y):
+    # print(font)
+    screen.blit(font.render(text, True, text_color), (x, y))
 
 
 class Bird(pygame.sprite.Sprite):
@@ -70,6 +80,9 @@ class Bird(pygame.sprite.Sprite):
             # rotate
             self.image = pygame.transform.rotate(
                 self.images[self.index], self.velocity * -2)
+        else:
+            self.image = pygame.transform.rotate(
+                self.images[self.index], -90)
 
 
 class Pipe(pygame.sprite.Sprite):
@@ -86,7 +99,7 @@ class Pipe(pygame.sprite.Sprite):
 
     def update(self) -> None:
         self.rect.x -= scroll_speed
-        if self.rect.x < 0:
+        if self.rect.right < 0:
             self.kill()
 
 
@@ -110,9 +123,20 @@ while running:
     pipe_group.draw(screen)
 
     screen.blit(ground, (ground_scroll, bottom))
+    # look for collide
+    if pygame.sprite.groupcollide(bird_group, pipe_group, False, False):
+        game_over = True
+    # increment score
+    if len(pipe_group):
+        if bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.left \
+            and bird_group.sprites()[0].rect.right < pipe_group.sprites()[0].rect.right \
+                and not between_pipe:
+            between_pipe = True
+        if between_pipe and bird_group.sprites()[0].rect.left > pipe_group.sprites()[0].rect.right:
+            between_pipe = False
+            score += 1
 
-    pygame.
-
+    draw_text(str(score), font, WHITE, width//2, 90)
     if flappy.rect.bottom >= bottom:
         game_over = True
         flying = False
