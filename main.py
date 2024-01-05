@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 # Initialize Pygame
 pygame.init()
@@ -79,16 +80,18 @@ class Pipe(pygame.sprite.Sprite):
         # position -1 for bottom pipe; 1 for top
         if position == 1:
             self.image = pygame.transform.flip(self.image, False, True)
-            self.rect.bottomleft = [x, y-pip_gap]
+            self.rect.bottomleft = [x, y - (pip_gap//2)]
         else:
-            self.rect.topleft = [x, y+pip_gap]
+            self.rect.topleft = [x, y+(pip_gap//2)]
 
     def update(self) -> None:
         self.rect.x -= scroll_speed
+        if self.rect.x < 0:
+            self.kill()
 
 
 bird_group = pygame.sprite.Group()
-flappy = Bird(100, width//2)
+flappy = Bird(100, height//2)
 bird_group.add(flappy)
 
 pipe_group = pygame.sprite.Group()
@@ -105,9 +108,10 @@ while running:
     bird_group.update()
 
     pipe_group.draw(screen)
-    pipe_group.update()
 
     screen.blit(ground, (ground_scroll, bottom))
+
+    pygame.
 
     if flappy.rect.bottom >= bottom:
         game_over = True
@@ -116,8 +120,9 @@ while running:
         # generate pipes automatically
         now = pygame.time.get_ticks()
         if now-last_time > pipe_frequency:
-            bottom_pipe = Pipe(width, width//2, -1)
-            top_pipe = Pipe(width, width//2, 1)
+            pipe_height = random.randint(-100, 100)
+            bottom_pipe = Pipe(width, height//2+pipe_height, -1)
+            top_pipe = Pipe(width, height//2+pipe_height, 1)
             pipe_group.add(bottom_pipe)
             pipe_group.add(top_pipe)
             last_time = now
@@ -125,6 +130,7 @@ while running:
         # Each little bars on the ground image are 35 pixels
         if ground_scroll < -35:
             ground_scroll = 0
+        pipe_group.update()
 
     # Handle events
     for event in pygame.event.get():

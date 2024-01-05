@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["blit", "bottomleft", "MOUSEBUTTONDOWN", "pygame", "topleft"]
+  "cSpell.words": [
+    "blit",
+    "bottomleft",
+    "groupcollide",
+    "MOUSEBUTTONDOWN",
+    "pygame",
+    "topleft"
+  ]
 }
